@@ -2,21 +2,21 @@ use crate::core::tetrominos::{ Coord, Tetromino, TetrominoType };
 use std::{ usize, vec::Vec };
 use bevy::color::Srgba;
 use strum::IntoEnumIterator;
-use std::boxed::Box;
-use rand::{ rng, rngs::ThreadRng, seq::SliceRandom };
+use rand::{ rng, seq::SliceRandom };
+use bevy::prelude::Component;
 
 pub const GRID_HEIGHT: i8 = 20;
 pub const GRID_WIDTH: i8 = 10;
 
-type Grid = Box<[[Option<Srgba>; GRID_HEIGHT as usize]; GRID_WIDTH as usize]>;
+pub type Grid = [[Option<Srgba>; GRID_HEIGHT as usize]; GRID_WIDTH as usize];
 
 #[derive(PartialEq, Eq, Debug)]
 pub enum GridError { 
     CannotAllocateNewTet
 }
 
+#[derive(Component)]
 pub struct GameGrid {
-    rand_gen: ThreadRng,
     tetrominos: Vec<Tetromino>,
     pub current_tetromino: Tetromino,
     pub grid: Grid,
@@ -26,23 +26,21 @@ pub struct GameGrid {
 impl Default for GameGrid{
 
     fn default() -> Self {
-
-        let mut rand_gen: ThreadRng = rng();
         
         let mut tetrominos: Vec<Tetromino> = TetrominoType::iter()
-                                            .map(|tet_type: TetrominoType| 
-                                                 {Tetromino::new(tet_type)})
-                                            .collect();
+                                             .map(|tet_type: TetrominoType| 
+                                                  {Tetromino::new(tet_type)})
+                                             .collect();
 
-        tetrominos.shuffle(&mut rand_gen);
+        tetrominos.shuffle(&mut rng());
 
         let current_tetromino: Tetromino = tetrominos.pop().unwrap();
 
-        let grid: Grid = Box::new([[None; GRID_HEIGHT as usize]; GRID_WIDTH as usize]);
+        let grid: Grid = [[None; GRID_HEIGHT as usize]; GRID_WIDTH as usize];
 
         let tet_coords: Coord = current_tetromino.get_init_coord();
 
-        GameGrid { rand_gen, tetrominos, current_tetromino, grid, tet_coords }
+        GameGrid { tetrominos, current_tetromino, grid, tet_coords }
     }
 }
 
@@ -60,7 +58,7 @@ impl GameGrid {
                     Tetromino::new(tet_type)
                 );
             }
-            self.tetrominos.shuffle(&mut self.rand_gen);
+            self.tetrominos.shuffle(&mut rng());
         }
 
         let tetromino: Tetromino = self.tetrominos.pop().unwrap();
