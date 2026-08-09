@@ -45,6 +45,15 @@ impl std::ops::Add for &Coord {
 
 }
 
+impl Eq for Coord {}
+
+impl std::cmp::PartialEq for Coord {
+    
+    fn eq(&self, other: &Self) -> bool {
+        self.x == other.x && self.y == other.y
+    }
+}
+
 #[derive(Debug, Clone, Copy)]
 pub struct Tetromino {
     blocks_masks: &'static [[Coord; 4]],
