@@ -6,9 +6,6 @@ pub type LighterBlockEdges = [Triangle2d; 4];
 pub type DarkerBlockEdges = [Triangle2d; 4];
 pub type InnerSquare = [Triangle2d; 2];
 
-#[derive(Component)]
-struct BackGroundAreaBlocks;
-
 pub fn make_block_meshes(block_size: f32) -> (LighterBlockEdges, DarkerBlockEdges, InnerSquare) {
 
     let edge_size: f32 = EDGE_RATIO * block_size;
@@ -21,7 +18,7 @@ pub fn make_block_meshes(block_size: f32) -> (LighterBlockEdges, DarkerBlockEdge
     let outer_left_edge = Triangle2d::new(
         vec2(0.0, 0.0),
         vec2(0.0, block_size),
-        vec2(edge_size, block_size - edge_size)
+        vec2(edge_size, edge_size)
     );
     let inner_up_edge = Triangle2d::new(
         vec2(edge_size, block_size - edge_size),
@@ -31,7 +28,7 @@ pub fn make_block_meshes(block_size: f32) -> (LighterBlockEdges, DarkerBlockEdge
     let outer_up_edge = Triangle2d::new(
         vec2(0.0, block_size),
         vec2(edge_size, block_size - edge_size),
-        vec2(edge_size, edge_size)
+        vec2(block_size, block_size)
     );
     let inner_right_edge = Triangle2d::new(
         vec2(block_size - edge_size, block_size - edge_size),
@@ -51,7 +48,7 @@ pub fn make_block_meshes(block_size: f32) -> (LighterBlockEdges, DarkerBlockEdge
     let outer_down_edge = Triangle2d::new(
         vec2(0.0, 0.0),
         vec2(edge_size, edge_size),
-        vec2(block_size, block_size)
+        vec2(block_size, 0.0)
     );
 
     let inner_square_top_left = Triangle2d::new(
