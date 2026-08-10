@@ -1,4 +1,27 @@
 use bevy::prelude::*;
+use crate::core::gamegrid::{GameGrid, Grid};
+use crate::core::tetrominos::{Tetromino, Coord};
+
+#[derive(Resource)]
+pub struct RenderingHistory { 
+    pub previous_grid: Grid,
+    pub previous_screen_hw: (f32, f32),
+    pub previous_tet: Tetromino,
+    pub previous_tet_coord: Coord,
+}
+
+impl RenderingHistory {
+    pub fn new(window: &Window, gamegrid: GameGrid) -> Self {
+        RenderingHistory { 
+            previous_grid: gamegrid.grid.clone(), 
+            previous_screen_hw: (window.height(), window.width()), 
+            previous_tet: gamegrid.current_tetromino.clone(), 
+            previous_tet_coord: gamegrid.tet_coords 
+        }
+    }
+}
+
+use bevy::prelude::*;
 use crate::rendering::background::{ GAME_HEIGHT, GAME_WIDTH };
 const INTERACTIVE_AREA_ORIGIN: (usize, usize) = (1, 1);
 
