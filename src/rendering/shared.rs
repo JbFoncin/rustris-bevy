@@ -1,6 +1,9 @@
 use bevy::prelude::*;
 use crate::core::gamegrid::{GameGrid, Grid};
 use crate::core::tetrominos::{Tetromino, Coord};
+use crate::rendering::background::{ GAME_HEIGHT, GAME_WIDTH };
+
+const INTERACTIVE_AREA_ORIGIN: (usize, usize) = (1, 1);
 
 #[derive(Resource)]
 pub struct RenderingHistory { 
@@ -20,10 +23,6 @@ impl RenderingHistory {
         }
     }
 }
-
-use bevy::prelude::*;
-use crate::rendering::background::{ GAME_HEIGHT, GAME_WIDTH };
-const INTERACTIVE_AREA_ORIGIN: (usize, usize) = (1, 1);
 
 pub struct CoordConverter {
     win_h: f32,
