@@ -52,4 +52,11 @@ impl CoordConverter {
 
         self.down_left_to_center(down_left_coord.0, down_left_coord.1) 
     }
+
+    pub fn background_idx_to_center(&self, row_index: usize, col_index: usize) -> (f32, f32) {
+        let down_left_coords: (f32, f32) = (row_index as f32 * self.block_size,
+                                            col_index as f32 * self.block_size);
+        
+        self.down_left_to_center(down_left_coords.0, down_left_coords.1)
+    }
 }
