@@ -14,10 +14,10 @@ pub struct RenderingHistory {
 }
 
 impl RenderingHistory {
-    pub fn new(window: &Window, gamegrid: GameGrid) -> Self {
+    pub fn new(window_size: (f32, f32), gamegrid: GameGrid) -> Self {
         RenderingHistory { 
             previous_grid: gamegrid.grid.clone(), 
-            previous_screen_hw: (window.height(), window.width()), 
+            previous_screen_hw: window_size, 
             previous_tet: gamegrid.current_tetromino.clone(), 
             previous_tet_coord: gamegrid.tet_coords 
         }
