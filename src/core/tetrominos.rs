@@ -1,5 +1,4 @@
 use strum_macros::EnumIter;
-use std::{ slice::Windows, iter::Cycle };
 use bevy::color::{ Srgba,
                    palettes::basic::{ RED, BLUE, GREEN, YELLOW, GRAY} };
 use crate::core::{ gamegrid::{GRID_HEIGHT, GRID_WIDTH}, 
