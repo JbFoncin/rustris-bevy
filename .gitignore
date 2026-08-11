@@ -22,5 +22,5 @@ target
 
 
 # Added by cargo
-cargo.lock
+Cargo.lock
 /target
