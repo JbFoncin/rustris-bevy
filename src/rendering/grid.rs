@@ -1,33 +1,25 @@
-use bevy::ecs::system::SystemParam;
 use bevy::prelude::*;
 
-use crate::core::gamegrid::GameGrid;
 use crate::rendering::block::make_block_meshes;
-use crate::rendering::shared::RenderingHistory;
 use crate::rendering::shared::CoordConverter;
+use crate::rendering::shared::RenderingParams;
 
 #[allow(dead_code)]
 #[derive(Component)]
 pub struct PlayableAreaFixedBlocks;
 
-#[allow(dead_code)]
-#[derive(SystemParam)]
-pub struct GridRenderingParams<'w, 's> {
-    pub meshes: ResMut<'w, Assets<Mesh>>,
-    pub materials: ResMut<'w, Assets<ColorMaterial>>,
-    pub window_query: Query<'w, 's,  &'static Window>,
-    pub gamegrid_query: Query<'w, 's, &'static GameGrid>,
-    pub rendering_history: ResMut<'w, RenderingHistory>
-}
-
-pub fn render_playable_area_fixed_blocks(mut resources: GridRenderingParams,
+pub fn render_playable_area_fixed_blocks(mut resources: RenderingParams,
                                          mut commands: Commands) {
 
-    let Ok(gamegrid) = resources.gamegrid_query.single() else { return; };
-    let Ok(window) = resources.window_query.single() else { return; };
+    let Ok(gamegrid) = resources.gamegrid_query.single() 
+        else { return; };
+    let Ok(window) = resources.window_query.single() 
+        else { return; };
+    let Ok(rendering_history) = resources.rendering_history_query.single() 
+        else {return;} ;
 
-    if gamegrid.grid == resources.rendering_history.previous_grid ||
-       resources.rendering_history.previous_screen_hw == (window.height(), window.width()) 
+    if gamegrid.grid == rendering_history.previous_grid ||
+       rendering_history.previous_screen_hw == (window.height(), window.width()) 
        { return; }
        
     let coord_converter: CoordConverter = CoordConverter::new(window);
@@ -57,12 +49,12 @@ pub fn render_playable_area_fixed_blocks(mut resources: GridRenderingParams,
 
             for handle in lighter_handles.iter() {   
 
-                commands.spawn(
-                    (PlayableAreaFixedBlocks, 
-                     Mesh2d(handle.clone()), 
-                     MeshMaterial2d(lighter_material_handle.clone()), 
-                     transform)
-                    );
+                commands.spawn((
+                    PlayableAreaFixedBlocks, 
+                    Mesh2d(handle.clone()), 
+                    MeshMaterial2d(lighter_material_handle.clone()), 
+                    transform
+                ));
                 }
 
             let darker_material = ColorMaterial::from(darker);
@@ -70,24 +62,24 @@ pub fn render_playable_area_fixed_blocks(mut resources: GridRenderingParams,
 
             for handle in darker_handles.iter() {
 
-                commands.spawn(
-                    (PlayableAreaFixedBlocks, 
+                commands.spawn((
+                     PlayableAreaFixedBlocks, 
                      Mesh2d(handle.clone()), 
                      MeshMaterial2d(darker_material_handle.clone()), 
-                     transform)
-                    );
+                     transform
+                    ));
             }
             let inner_material = ColorMaterial::from(Color::from(color.clone()));
             let inner_material_handle = resources.materials.add(inner_material);
 
             for handle in inner_handles.iter() {
 
-                commands.spawn(
-                    (PlayableAreaFixedBlocks, 
-                     Mesh2d(handle.clone()), 
-                     MeshMaterial2d(inner_material_handle.clone()), 
-                     transform)
-                    );
+                commands.spawn((
+                    PlayableAreaFixedBlocks, 
+                    Mesh2d(handle.clone()), 
+                    MeshMaterial2d(inner_material_handle.clone()), 
+                    transform
+                ));
             }
         }
     }
