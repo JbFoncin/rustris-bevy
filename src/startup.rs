@@ -9,9 +9,9 @@ pub fn init(mut commands: Commands) {
 
     let gamegrid = GameGrid::default();
 
-    commands.spawn(gamegrid.clone());
+    let rendering_history = RenderingHistory::new((0.0, 0.0), &gamegrid);
 
-    let rendering_history = RenderingHistory::new((0.0, 0.0), gamegrid);
+    commands.spawn(gamegrid);    
 
     commands.spawn(rendering_history);
 
