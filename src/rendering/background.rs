@@ -3,8 +3,7 @@ use bevy::prelude::*;
 use crate::core::gamegrid::{GRID_HEIGHT, GRID_WIDTH};
 use crate::core::tetrominos::Coord;
 use crate::rendering::block::make_block_meshes;
-use crate::rendering::grid::GridRenderingParams;
-use crate::rendering::shared::CoordConverter;
+use crate::rendering::shared::{CoordConverter, RenderingParams};
 
 pub const GAME_HEIGHT: i8 = 22;
 pub const GAME_WIDTH: i8 = 18;
@@ -12,16 +11,16 @@ pub const GAME_WIDTH: i8 = 18;
 #[derive(Component)]
 pub struct BackGroundBlocks;
 
-pub fn render_background(rendering_params: GridRenderingParams,
+pub fn render_background(rendering_params: RenderingParams,
                          mut commands: Commands) {
 
-    let window_query = rendering_params.window_query;
-    let rendering_history = rendering_params.rendering_history;
 
-    let Ok(window) = window_query.single() else {return;};
+    let Ok(window) = rendering_params.window_query.single() else {return;};
+    let Ok(rendering_history) = rendering_params.rendering_history_query.single() 
+        else {return;};
 
-    //if rendering_history.previous_screen_hw == (window.height(), window.width())
-    //    {return;}
+    if rendering_history.previous_screen_hw == (window.height(), window.width())
+       {return;}
 
     let coord_converter = CoordConverter::new(window);
 
@@ -63,19 +62,17 @@ pub fn render_background(rendering_params: GridRenderingParams,
                                        MeshMaterial2d(lighter_handle.clone()),
                                        transform));
             }
-            
             for dark_mesh_h in darker_meshes_handles.iter() {
                 commands.spawn((BackGroundBlocks,
                                        Mesh2d(dark_mesh_h.clone()),
                                        MeshMaterial2d(darker_handle.clone()),
                                        transform));
-
+            }
             for inner_mesh_h in inner_meshes_handles.iter() {
                 commands.spawn((BackGroundBlocks,
                                        Mesh2d(inner_mesh_h.clone()),
                                        MeshMaterial2d(normal_handle.clone()),
                                        transform));
-            }
             }
         };
 
