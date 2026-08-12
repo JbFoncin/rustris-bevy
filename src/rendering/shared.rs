@@ -1,3 +1,4 @@
+use bevy::ecs::system::SystemParam;
 use bevy::prelude::*;
 use crate::core::gamegrid::{GameGrid, Grid};
 use crate::core::tetrominos::{Tetromino, Coord};
@@ -14,7 +15,7 @@ pub struct RenderingHistory {
 }
 
 impl RenderingHistory {
-    pub fn new(window_size: (f32, f32), gamegrid: GameGrid) -> Self {
+    pub fn new(window_size: (f32, f32), gamegrid: &GameGrid) -> Self {
         RenderingHistory { 
             previous_grid: gamegrid.grid.clone(), 
             previous_screen_hw: window_size, 
@@ -22,6 +23,16 @@ impl RenderingHistory {
             previous_tet_coord: gamegrid.tet_coords 
         }
     }
+}
+
+#[allow(dead_code)]
+#[derive(SystemParam)]
+pub struct RenderingParams<'w, 's> {
+    pub meshes: ResMut<'w, Assets<Mesh>>,
+    pub materials: ResMut<'w, Assets<ColorMaterial>>,
+    pub window_query: Query<'w, 's,  &'static Window>,
+    pub gamegrid_query: Query<'w, 's, &'static GameGrid>,
+    pub rendering_history_query: Query<'w, 's, &'static RenderingHistory>
 }
 
 pub struct CoordConverter {
