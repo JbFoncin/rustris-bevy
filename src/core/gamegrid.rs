@@ -11,16 +11,18 @@ pub const GRID_WIDTH: i8 = 10;
 pub type Grid = [[Option<Srgba>; GRID_HEIGHT as usize]; GRID_WIDTH as usize];
 
 #[derive(PartialEq, Eq, Debug)]
-pub enum GridError { 
-    CannotAllocateNewTet
+pub enum GameState { 
+    Running,
+    GameOver
 }
 
-#[derive(Component)]
+#[derive(Component, Debug)]
 pub struct GameGrid {
     tetrominos: Vec<Tetromino>,
     pub current_tetromino: Tetromino,
     pub grid: Grid,
-    pub tet_coords: Coord
+    pub tet_coords: Coord,
+    pub game_state: GameState
 }
 
 impl Default for GameGrid{
@@ -40,7 +42,8 @@ impl Default for GameGrid{
 
         let tet_coords: Coord = current_tetromino.get_init_coord();
 
-        GameGrid { tetrominos, current_tetromino, grid, tet_coords }
+        GameGrid { tetrominos, current_tetromino, grid, tet_coords, 
+                   game_state: GameState::Running }
     }
 }
 
@@ -50,7 +53,7 @@ impl GameGrid {
         Self::default()
     }
 
-    fn renew_current_tetromino(&mut self) -> Result<(), GridError> {
+    fn renew_current_tetromino(&mut self) {
 
         if self.tetrominos.is_empty() {
             for tet_type in TetrominoType::iter() {
@@ -66,10 +69,9 @@ impl GameGrid {
 
         if self.is_move_valid(tet_coords, tetromino.mask)
             { self.current_tetromino = tetromino;
-              self.tet_coords = tet_coords;
-              Ok(()) }
+              self.tet_coords = tet_coords; }
         else
-            { Err(GridError::CannotAllocateNewTet) }
+            { self.game_state = GameState::GameOver }
 
     }
 
@@ -82,17 +84,17 @@ impl GameGrid {
                           {self.grid[c.x as usize][c.y as usize] = Some(color)});          
     }
 
-    fn move_tet_left(&mut self) {
+    pub fn move_tet_left(&mut self) {
         if self.is_move_valid(Coord { x: -1, y: 0 }, self.current_tetromino.mask)
             { self.tet_coords += Coord { x: -1, y: 0 }; }
     }
 
-    fn move_tet_right(&mut self) {
+    pub fn move_tet_right(&mut self) {
         if self.is_move_valid(Coord { x: 1, y: 0 }, self.current_tetromino.mask)
             { self.tet_coords += Coord { x: 1, y: 0 }; }
     }
 
-    fn dump_tet(&mut self) -> Result<(), GridError>{
+    pub fn dump_tet(&mut self) {
 
         let mut dump_coord: Coord = Coord{ x: 0, y: 0 };
         let coord_down: Coord = Coord{ x: 0, y: -1 };
@@ -106,8 +108,7 @@ impl GameGrid {
 
         self.tet_coords += dump_coord;
         self.fix_current_tetromino();
-        self.renew_current_tetromino()?;
-        Ok(())
+        self.renew_current_tetromino();
 
     }
 
@@ -117,23 +118,22 @@ impl GameGrid {
             { self.current_tetromino.update_mask_and_next_one(); }
     }
 
-    fn move_tet_down(&mut self) -> Result<(), GridError> {
+    pub fn move_tet_down(&mut self) {
 
         if self.is_move_valid(Coord{ x: 0, y: -1}, self.current_tetromino.mask)
-            { self.tet_coords += Coord{ x: 0, y: -1 }; Ok(()) }
+            { self.tet_coords += Coord{ x: 0, y: -1 }; }
 
         else { self.fix_current_tetromino(); 
-               self.renew_current_tetromino()?; 
-               Ok(()) }
+               self.renew_current_tetromino(); }
     }
 
     fn is_move_valid(&self, tet_coord: Coord, mask: &[Coord]) -> bool {
 
-        mask.iter().map(|c: &Coord| c + &tet_coord)
+        mask.iter().map(|c: &Coord| c + &self.tet_coords)
                    .all(|c: Coord| { (c.x >= 0) && (c.y >= 0) &&
                                      (c.x < GRID_WIDTH) && (c.y < GRID_HEIGHT) &&
-                                     self.grid[c.x as usize][c.y as usize].is_none() }) 
-
+                                     self.grid[c.x as usize][c.y as usize].is_none() })
+                
     }
 
 }
