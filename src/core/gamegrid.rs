@@ -129,7 +129,7 @@ impl GameGrid {
 
     fn is_move_valid(&self, tet_coord: Coord, mask: &[Coord]) -> bool {
 
-        mask.iter().map(|c: &Coord| c + &self.tet_coords)
+        mask.iter().map(|c: &Coord| c + &self.tet_coords + tet_coord)
                    .all(|c: Coord| { (c.x >= 0) && (c.y >= 0) &&
                                      (c.x < GRID_WIDTH) && (c.y < GRID_HEIGHT) &&
                                      self.grid[c.x as usize][c.y as usize].is_none() })
