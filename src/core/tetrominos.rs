@@ -56,7 +56,7 @@ impl std::cmp::PartialEq for Coord {
 #[derive(Debug, Clone, Copy)]
 pub struct Tetromino {
     blocks_masks: &'static [[Coord; 4]],
-    pub mask_idx: usize,
+    mask_idx: usize,
     pub color: Srgba,
     pub mask: &'static[Coord; 4],
     pub next_mask: &'static[Coord; 4]
@@ -130,11 +130,9 @@ impl Tetromino {
     pub fn update_mask_and_next_one(&mut self) -> () {
 
         self.mask_idx = (self.mask_idx + 1) % self.blocks_masks.len();
-
         self.mask = &self.blocks_masks[self.mask_idx];
 
         let next_mask_idx: usize = (self.mask_idx + 1) % self.blocks_masks.len();
-
         self.next_mask = &self.blocks_masks[next_mask_idx];
 
     } 
@@ -148,7 +146,8 @@ impl Tetromino {
     pub fn get_init_coord(&self) -> Coord {
         let tet_height: i8 = self.get_height();
         let tet_width: i8 = self.get_width(); 
-        Coord { x: (GRID_WIDTH - tet_width - 1) / 2, 
+
+        Coord { x: ((GRID_WIDTH - tet_width) / 2) - 1, 
                 y:  GRID_HEIGHT - tet_height - 1 }
     }
 

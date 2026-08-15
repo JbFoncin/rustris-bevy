@@ -11,22 +11,25 @@ pub fn render_current_tetronimo(mut resources: RenderingParams, mut commands: Co
 
     let Ok(rendering_history) = resources.rendering_history_query.single() 
         else { return; };
-    let Ok(gamegrid) = resources.gamegrid_query.single()
+
+        let Ok(gamegrid) = resources.gamegrid_query.single()
         else { return; };
 
+
     if gamegrid.current_tetromino.mask == rendering_history.previous_tet.mask &&
-       gamegrid.tet_coords == rendering_history.previous_tet_coord {
+       gamegrid.tet_coord == rendering_history.previous_tet_coord {
             return;
        }
 
     let Ok(window) = resources.window_query.single()
         else {return;};
 
-    let tet_coords = gamegrid.current_tetromino.mask.map(
-        |x| x + gamegrid.tet_coords
+    let tet_coord = gamegrid.current_tetromino.mask.map(
+        |x| x + gamegrid.tet_coord
     );
 
     let coord_converter = CoordConverter::new(window);
+
 
     let (lighter_meshes,
          darker_meshes,
@@ -50,7 +53,7 @@ pub fn render_current_tetronimo(mut resources: RenderingParams, mut commands: Co
     let darker_color_h = resources.materials.add(darker_color);
     let inner_color_h = resources.materials.add(inner_color);
 
-    tet_coords.iter().for_each(
+    tet_coord.iter().for_each(
         |c| {
             let (x, y) = coord_converter.playable_grid_idx_to_center(
                 c.x as usize, 

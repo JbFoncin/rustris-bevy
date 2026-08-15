@@ -1,4 +1,4 @@
-use bevy::{ecs::system::command, prelude::*, render::view::window};
+use bevy::prelude::*;
 
 use crate::{core::gamegrid::GameGrid, rendering::{background::BackGroundBlocks, 
                                                   grid::PlayableAreaFixedBlocks, 
@@ -34,7 +34,7 @@ pub fn clean_current_tet(rendering_history_q: Query<&RenderingHistory>,
 
     if (window.height(), window.width()) == rendering_history.previous_screen_hw &&
        rendering_history.previous_tet.mask == gamegrid.current_tetromino.mask &&
-       rendering_history.previous_tet_coord == gamegrid.tet_coords { return; }
+       rendering_history.previous_tet_coord == gamegrid.tet_coord { return; }
 
     entities_query.iter().for_each(|entity| commands.entity(entity).despawn());
 }    
