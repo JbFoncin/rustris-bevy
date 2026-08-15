@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 
-use crate::{core::gamegrid::GameGrid, rendering::shared::RenderingHistory};
+use crate::{core::gamegrid::GameGrid, 
+            rendering::shared::RenderingHistory};
 
 
 pub fn init(mut commands: Commands) {
@@ -13,6 +14,6 @@ pub fn init(mut commands: Commands) {
 
     commands.spawn(gamegrid);    
 
-    commands.spawn(rendering_history);
+    commands.insert_resource(rendering_history);
 
 }
