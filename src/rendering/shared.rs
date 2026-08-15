@@ -6,7 +6,7 @@ use crate::rendering::background::{ GAME_HEIGHT, GAME_WIDTH };
 
 const INTERACTIVE_AREA_ORIGIN: (usize, usize) = (1, 1);
 
-#[derive(Resource)]
+#[derive(Resource, Debug)]
 pub struct RenderingHistory { 
     pub previous_grid: Grid,
     pub previous_screen_hw: (f32, f32),
@@ -20,9 +20,27 @@ impl RenderingHistory {
             previous_grid: gamegrid.grid.clone(), 
             previous_screen_hw: window_size, 
             previous_tet: gamegrid.current_tetromino.clone(), 
-            previous_tet_coord: gamegrid.tet_coords 
+            previous_tet_coord: gamegrid.tet_coord 
         }
     }
+}
+
+pub fn update_rendering_history(mut rendering_history_q: Query<&mut RenderingHistory>,
+                                gamegrid_q: Query<&GameGrid>,
+                                window_q: Query<&Window>) {
+    
+    let Ok(mut rendering_history) = rendering_history_q.single_mut()
+        else {return;};
+
+    let Ok(window) = window_q.single() else {return;};
+
+    rendering_history.previous_screen_hw = (window.height(), window.width());
+
+    let Ok(gamegrid) = gamegrid_q.single() else {return;};
+
+    rendering_history.previous_grid = gamegrid.grid.clone();
+    rendering_history.previous_tet = gamegrid.current_tetromino.clone();
+    rendering_history.previous_tet_coord = gamegrid.tet_coord.clone();
 }
 
 #[allow(dead_code)]
@@ -65,9 +83,9 @@ impl CoordConverter {
     }
 
     pub fn background_idx_to_center(&self, row_index: usize, col_index: usize) -> (f32, f32) {
-        let down_left_coords: (f32, f32) = (row_index as f32 * self.block_size,
+        let down_left_coord: (f32, f32) = (row_index as f32 * self.block_size,
                                             col_index as f32 * self.block_size);
         
-        self.down_left_to_center(down_left_coords.0, down_left_coords.1)
+        self.down_left_to_center(down_left_coord.0, down_left_coord.1)
     }
 }
