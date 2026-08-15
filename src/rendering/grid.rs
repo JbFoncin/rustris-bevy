@@ -18,7 +18,7 @@ pub fn render_playable_area_fixed_blocks(mut resources: RenderingParams,
     let Ok(rendering_history) = resources.rendering_history_query.single() 
         else {return;} ;
 
-    if gamegrid.grid == rendering_history.previous_grid ||
+    if gamegrid.grid == rendering_history.previous_grid &&
        rendering_history.previous_screen_hw == (window.height(), window.width()) 
        { return; }
        
