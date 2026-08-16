@@ -1,6 +1,5 @@
 use strum_macros::EnumIter;
-use bevy::color::{ Srgba,
-                   palettes::basic::{ RED, BLUE, GREEN, YELLOW, GRAY} };
+use bevy::color::{ Srgba, palettes::{basic::RED, tailwind::{BLUE_500, GRAY_500, GREEN_500, YELLOW_500}} };
 use crate::core::{ gamegrid::{GRID_HEIGHT, GRID_WIDTH}, 
                    masks::* };
 
@@ -96,7 +95,7 @@ impl Tetromino {
                 
                 Tetromino { blocks_masks: MASKS_S,
                             mask_idx: 0,
-                            color: BLUE,
+                            color: BLUE_500,
                             mask: &MASKS_S[0],
                             next_mask: &MASKS_S[1] }}
 
@@ -104,7 +103,7 @@ impl Tetromino {
                 
                 Tetromino { blocks_masks: MASKS_Z,
                             mask_idx: 0,
-                            color: GREEN,
+                            color: GREEN_500,
                             mask: &MASKS_Z[0],
                             next_mask: &MASKS_Z[1] }}
 
@@ -112,7 +111,7 @@ impl Tetromino {
                 
                 Tetromino { blocks_masks: MASKS_L,
                             mask_idx: 0,
-                            color: YELLOW,
+                            color: YELLOW_500,
                             mask: &MASKS_L[0],
                             next_mask: &MASKS_L[1] }}
 
@@ -120,7 +119,7 @@ impl Tetromino {
                 
                 Tetromino { blocks_masks: MASKS_T,
                             mask_idx: 0,
-                            color: GRAY,
+                            color: GRAY_500,
                             mask: &MASKS_T[0],
                             next_mask: &MASKS_T[1] }}
                             
