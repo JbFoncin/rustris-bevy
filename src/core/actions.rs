@@ -17,3 +17,15 @@ pub fn make_tet_fall(mut local_timer: Local<Option<Timer>>,
     }
 
 }
+
+pub fn apply_player_action(mut gamegrid_query: Query<&mut GameGrid>,
+                           input: Res<ButtonInput<KeyCode>>) {
+    
+    let Ok(mut gamegrid) = gamegrid_query.single_mut() else {return;};
+
+    if input.just_pressed(KeyCode::ArrowUp) { gamegrid.change_tet_mask(); }
+    if input.just_pressed(KeyCode::ArrowLeft) { gamegrid.move_tet_left(); }
+    if input.just_pressed(KeyCode::ArrowRight) { gamegrid.move_tet_right(); }
+    if input.just_pressed(KeyCode::ArrowDown) { gamegrid.dump_tet(); }
+
+}
