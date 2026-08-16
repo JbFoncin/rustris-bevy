@@ -22,7 +22,8 @@ pub struct GameGrid {
     pub current_tetromino: Tetromino,
     pub grid: Grid,
     pub tet_coord: Coord,
-    pub game_state: GameState
+    pub game_state: GameState,
+    pub lines_removed: usize
 }
 
 impl Default for GameGrid{
@@ -43,15 +44,11 @@ impl Default for GameGrid{
         let tet_coord: Coord = current_tetromino.get_init_coord();
 
         GameGrid { tetrominos, current_tetromino, grid, tet_coord, 
-                   game_state: GameState::Running }
+                   game_state: GameState::Running, lines_removed: 0 }
     }
 }
 
 impl GameGrid {
-
-    pub fn new() -> Self {
-        Self::default()
-    }
 
     fn renew_current_tetromino(&mut self) {
 
@@ -84,7 +81,9 @@ impl GameGrid {
         
         self.current_tetromino.mask.iter().map(|c: &Coord| c + &self.tet_coord)
                 .for_each(|c: Coord|
-                          {self.grid[c.x as usize][c.y as usize] = Some(color)});          
+                          {self.grid[c.x as usize][c.y as usize] = Some(color)});
+
+        self.remove_full_lines();       
     }
 
     pub fn move_tet_left(&mut self) {
@@ -109,11 +108,12 @@ impl GameGrid {
         let coord_down: Coord = Coord{ x: 0, y: -1 };
 
         loop {
-            let coord_to_test: Coord = self.tet_coord + dump_coord + coord_down;
+            let coord_to_test: Coord = dump_coord + coord_down;
             if self.is_move_valid(
                 coord_to_test, 
                 &self.tet_coord, 
-                self.current_tetromino.mask)
+                self.current_tetromino.mask
+            )
                 { dump_coord += coord_down; }
             else { break; }
         }
@@ -124,12 +124,13 @@ impl GameGrid {
 
     }
 
-    fn change_tet_mask(&mut self) {
+    pub fn change_tet_mask(&mut self) {
 
     if self.is_move_valid(
             Coord{ x: 0, y: -1}, 
             &self.tet_coord,  
-            self.current_tetromino.next_mask)
+            self.current_tetromino.next_mask
+        )
             { self.current_tetromino.update_mask_and_next_one(); }
     }
 
@@ -150,9 +151,40 @@ impl GameGrid {
 
         mask.iter().map(|c: &Coord| c + tet_coord + coord_change)
                    .all(|c: Coord| { (c.x >= 0) && (c.y >= 0) &&
-                                     (c.x < GRID_WIDTH) && (c.y < GRID_HEIGHT) &&
+                                     (c.x <= GRID_WIDTH - 1) && (c.y <= GRID_HEIGHT - 1) &&
                                      self.grid[c.x as usize][c.y as usize].is_none() })
                 
     }
 
+    fn shift_rows_down(&mut self, start: usize) {
+
+        for x in 0..(GRID_WIDTH as usize) {
+            for y in start..(GRID_HEIGHT as usize - 1) {
+                self.grid[x][y] = self.grid[x][y + 1]
+            }
+            self.grid[x][GRID_HEIGHT as usize - 1] = None;
+        }
+    }
+
+    fn remove_full_lines(&mut self) {
+
+    let mut row: usize = 0;
+    
+    loop {
+        let is_row_full: bool = self.grid.iter()
+                                         .map(|x| x[row])
+                                         .all(|x| x.is_some());
+        if is_row_full {
+            self.grid.iter_mut().for_each(|x| x[row] = None);
+            self.shift_rows_down(row);
+            self.lines_removed += 1;
+        }
+        else 
+            { row += 1 }
+
+        if row == GRID_HEIGHT as usize - 1 
+            { break; }
+    }
+    
+    }  
 }
