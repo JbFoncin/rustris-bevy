@@ -79,9 +79,12 @@ pub fn render_background(rendering_params: RenderingParams,
     //bottom line
 
     (0..GAME_WIDTH).for_each(|x| spawn(Coord{x: x, y: 0}));
-    for row in 1..=GRID_HEIGHT {
-        (0..1).chain((GRID_WIDTH + 1)..GAME_WIDTH).for_each(|x| spawn(Coord { x, y: row }))
+    for row in 1..=(GRID_HEIGHT-3) {
+        (0..1).chain((GRID_WIDTH + 1)..GAME_WIDTH).for_each(|x| spawn(Coord { x, y: row }));
     }
-    (0..GAME_WIDTH).for_each(|x| spawn(Coord{x: x, y: GAME_HEIGHT-1}));
+    for row in (GRID_HEIGHT - 2)..=GRID_HEIGHT {
+        [0, GRID_WIDTH + 1, GAME_WIDTH - 1].iter().for_each(|x| spawn(Coord { x: *x, y: row }));
+    }
+    (0..GAME_WIDTH).for_each(|x| spawn(Coord{x: x, y: GAME_HEIGHT - 1}));
 }
 
