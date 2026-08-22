@@ -12,6 +12,7 @@ pub struct RenderingHistory {
     pub previous_screen_hw: (f32, f32),
     pub previous_tet: Tetromino,
     pub previous_tet_coord: Coord,
+    pub previous_lines_removed: usize
 }
 
 impl RenderingHistory {
@@ -20,7 +21,8 @@ impl RenderingHistory {
             previous_grid: gamegrid.grid.clone(), 
             previous_screen_hw: window_size, 
             previous_tet: gamegrid.current_tetromino.clone(), 
-            previous_tet_coord: gamegrid.tet_coord 
+            previous_tet_coord: gamegrid.tet_coord,
+            previous_lines_removed: 0 
         }
     }
 }
@@ -41,6 +43,7 @@ pub fn update_rendering_history(mut rendering_history_q: Query<&mut RenderingHis
     rendering_history.previous_grid = gamegrid.grid.clone();
     rendering_history.previous_tet = gamegrid.current_tetromino.clone();
     rendering_history.previous_tet_coord = gamegrid.tet_coord.clone();
+    rendering_history.previous_lines_removed = gamegrid.lines_removed;
 }
 
 #[allow(dead_code)]
@@ -71,7 +74,7 @@ impl CoordConverter {
     }
 
     pub fn down_left_to_center(&self, x: f32, y:f32) -> (f32, f32) {
-        (x - self.win_w / 2.0, y - self.win_h / 2.0)
+        (x - self.win_w / 2., y - self.win_h / 2.)
     }
 
     pub fn playable_grid_idx_to_center(&self, row_index: usize, col_index: usize) -> (f32, f32) {
@@ -88,4 +91,24 @@ impl CoordConverter {
         
         self.down_left_to_center(down_left_coord.0, down_left_coord.1)
     }
+
+    pub fn score_title_position(&self) -> (f32, f32) {
+        let down_left_coord = (12. * self.block_size, 21. * self.block_size);
+        self.down_left_to_center(down_left_coord.0, down_left_coord.1)
+    }
+
+    pub fn score_value_position(&self) -> (f32, f32) {
+        let down_left_coord = (12. * self.block_size, 19.8 * self.block_size);
+        self.down_left_to_center(down_left_coord.0, down_left_coord.1)
+    }
+
+    pub fn score_level_position(&self) -> (f32, f32) {
+        let down_left_coord = (self.block_size * 12., 18.8 * self.block_size);
+        self.down_left_to_center(down_left_coord.0, down_left_coord.1)
+    }
+
+    pub fn score_area_row_size(&self) -> Vec2 {
+        vec2(5. * self.block_size, 5. * self.block_size)
+    }
+
 }
