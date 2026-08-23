@@ -127,7 +127,7 @@ impl GameGrid {
     pub fn change_tet_mask(&mut self) {
 
     if self.is_move_valid(
-            Coord{ x: 0, y: -1}, 
+            Coord{ x: 0, y: 0 }, 
             &self.tet_coord,  
             self.current_tetromino.next_mask
         )
