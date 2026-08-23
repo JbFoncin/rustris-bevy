@@ -65,8 +65,6 @@ pub fn render_score(gamegrid_q: Query<&GameGrid>,
                               (gamegrid.lines_removed / 10 + 1 ).pow(2) +
                                gamegrid.lines_removed * 10 - 2;
 
-    dbg!(value_position, (window.height(), window.width()));
-
     commands.spawn(
         (
             ScoreContent,

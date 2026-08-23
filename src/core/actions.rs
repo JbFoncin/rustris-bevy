@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use bevy::prelude::*;
 
 use crate::core::gamegrid::GameGrid;
@@ -9,8 +11,14 @@ pub fn make_tet_fall(mut local_timer: Local<Option<Timer>>,
     let Ok(mut gamegrid) = gamegrid_query.single_mut() else {return;};
 
     let timer = local_timer.get_or_insert_with(|| {
-        Timer::from_seconds(1.0, TimerMode::Repeating)
+        Timer::from_seconds(1., TimerMode::Repeating)
     });
+
+    timer.set_duration(
+        Duration::from_secs_f32(
+            0.95_f32.powi((gamegrid.lines_removed / 10 + 1) as i32)
+        )
+    );
 
     if timer.tick(time.delta()).just_finished() {
         gamegrid.move_tet_down();
