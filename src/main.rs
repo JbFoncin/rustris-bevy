@@ -1,5 +1,12 @@
 use bevy::prelude::*;
-use crate::{core::actions::{apply_player_action, make_tet_fall}, rendering::{background::render_background, clean::{clean_background, clean_current_tet, clean_playable_fixed_grid, clean_score}, grid::render_playable_area_fixed_blocks, score::render_score, shared::update_rendering_history, tetromino::render_current_tetronimo}, startup::init};
+use crate::{core::actions::{apply_player_action, make_tet_fall}, 
+            rendering::{background::render_background, 
+                        clean::{clean_background, clean_current_tet, clean_playable_fixed_grid, clean_score}, 
+                        grid::render_playable_area_fixed_blocks, 
+                        score::render_score, 
+                        shared::update_rendering_history, 
+                        tetromino::render_current_tetronimo}, 
+            startup::init};
 mod core;
 mod startup;
 mod rendering;

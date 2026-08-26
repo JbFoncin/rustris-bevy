@@ -57,31 +57,58 @@ pub fn render_background(rendering_params: RenderingParams,
             let transform = Transform::from_xyz(x, y, 0.0);
 
             for light_mesh_h in lighter_meshes_handles.iter() {
-                commands.spawn((BackGroundBlocks,
-                                       Mesh2d(light_mesh_h.clone()),
-                                       MeshMaterial2d(lighter_handle.clone()),
-                                       transform));
+                commands.spawn(
+                    (
+                        BackGroundBlocks,
+                        Mesh2d(light_mesh_h.clone()),
+                        MeshMaterial2d(lighter_handle.clone()),
+                        transform
+                    )
+                );
             }
             for dark_mesh_h in darker_meshes_handles.iter() {
-                commands.spawn((BackGroundBlocks,
-                                       Mesh2d(dark_mesh_h.clone()),
-                                       MeshMaterial2d(darker_handle.clone()),
-                                       transform));
+                commands.spawn(
+                    (
+                        BackGroundBlocks,
+                        Mesh2d(dark_mesh_h.clone()),
+                        MeshMaterial2d(darker_handle.clone()),
+                        transform
+                    )
+                );
             }
             for inner_mesh_h in inner_meshes_handles.iter() {
-                commands.spawn((BackGroundBlocks,
-                                       Mesh2d(inner_mesh_h.clone()),
-                                       MeshMaterial2d(normal_handle.clone()),
-                                       transform));
+                commands.spawn(
+                    (
+                        BackGroundBlocks,
+                        Mesh2d(inner_mesh_h.clone()),
+                        MeshMaterial2d(normal_handle.clone()),
+                        transform
+                    )
+                );
             }
         };
 
     //bottom line
 
     (0..GAME_WIDTH).for_each(|x| spawn(Coord{x: x, y: 0}));
-    for row in 1..=(GRID_HEIGHT-3) {
-        (0..1).chain((GRID_WIDTH + 1)..GAME_WIDTH).for_each(|x| spawn(Coord { x, y: row }));
+
+    if /*cfg!(target_os="android")*/true {
+
+        for row in (1..=5).chain(12..=(GRID_HEIGHT-3)) {
+            (0..1).chain((GRID_WIDTH + 1)..GAME_WIDTH).for_each(|x| spawn(Coord { x, y: row }));
+        }
+        for row in 6..12 {
+            [0, GRID_WIDTH + 1].iter().for_each(|x| spawn(Coord { x: *x, y: row }));
+        }
+        (0..1).chain((GRID_WIDTH + 1)..GAME_WIDTH).for_each(|x| spawn(Coord { x, y: GRID_HEIGHT - 3 }))
     }
+    
+    else {
+        for row in 1..=(GRID_HEIGHT-3) {
+            (0..1).chain((GRID_WIDTH + 1)..GAME_WIDTH).for_each(|x| spawn(Coord { x, y: row }));
+        }
+    }
+
     for row in (GRID_HEIGHT - 2)..=GRID_HEIGHT {
         [0, GRID_WIDTH + 1, GAME_WIDTH - 1].iter().for_each(|x| spawn(Coord { x: *x, y: row }));
     }
