@@ -38,7 +38,6 @@ pub fn render_background(rendering_params: RenderingParams,
     let darker_meshes_handles = darker_meshes.map(|x| meshes.add(x));
     let inner_meshes_handles = inner_meshes.map(|x| meshes.add(x));
 
-
     let lighter_material = ColorMaterial::from(Color::from(lighter_gray));
     let darker_material = ColorMaterial::from(Color::from(darker_gray));
     let normal_material = ColorMaterial::from(Color::from(GRAY));

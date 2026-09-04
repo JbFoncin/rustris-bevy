@@ -17,7 +17,16 @@ bevy = { version = "0.19.0", default-features = false, features = [
     "bevy_asset",
     "zstd_rust",
     "bevy_sprite_render",
-    "bevy_text"
+    "bevy_text",
+    "bevy_ui",
+    "bevy_ui_render",
+    "bevy_ui_widgets",
+    "debug",
+    "bevy_picking",
+    "png",
+    "bevy_material",
+    "bevy_pbr",
+    "bevy_picking"
     ]}
 blob = "0.3.0"
 linebender_resource_handle = "0.1.1"
