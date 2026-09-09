@@ -1,7 +1,9 @@
 use bevy::prelude::*;
 use crate::{core::actions::{apply_player_action, make_tet_fall}, 
             rendering::{background::render_background, 
-                        clean::{clean_background, clean_current_tet, clean_playable_fixed_grid, clean_score}, 
+                        buttons::render_buttons, 
+                        clean::{clean_background, clean_current_tet, 
+                                clean_playable_fixed_grid, clean_score, clean_buttons}, 
                         grid::render_playable_area_fixed_blocks, 
                         score::render_score, 
                         shared::update_rendering_history, 
@@ -27,13 +29,15 @@ fn main() {
                     clean_background,
                     clean_current_tet,
                     clean_playable_fixed_grid,
-                    clean_score
+                    clean_score,
+                    clean_buttons
                 ),
                 (
                     render_background,
                     render_playable_area_fixed_blocks,
                     render_current_tetronimo,
-                    render_score
+                    render_score,
+                    render_buttons
                 )
             ).chain()
         )

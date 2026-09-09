@@ -91,7 +91,7 @@ pub fn render_background(rendering_params: RenderingParams,
 
     (0..GAME_WIDTH).for_each(|x| spawn(Coord{x: x, y: 0}));
 
-    if /*cfg!(target_os="android")*/true {
+    if cfg!(target_os="android") {
 
         for row in (1..=5).chain(12..=(GRID_HEIGHT-3)) {
             (0..1).chain((GRID_WIDTH + 1)..GAME_WIDTH).for_each(|x| spawn(Coord { x, y: row }));

@@ -1,4 +1,4 @@
-use bevy::{color::palettes::css::GRAY, ecs::{event::Trigger, observer::TriggerContext}, prelude::*};
+use bevy::{color::palettes::css::GRAY, prelude::*};
 
 use crate::{core::gamegrid::GameGrid, 
             rendering::shared::{CoordConverter, RenderingHistory}};
@@ -11,22 +11,13 @@ pub struct ArrowImageHandles {
     pub arrow_left: Handle<Image>
 }
 
-#[derive(Clone, Copy, Event)]
-pub enum ButtonPressed {
-    Up,
-    Right,
-    Down,
-    Left
-}
-
-
-pub fn render_buttons(mut gamegrid_query: Query<&mut GameGrid>,
-                      rendering_history_q: Query<&RenderingHistory>,
+pub fn render_buttons(rendering_history_q: Query<&RenderingHistory>,
                       arrow_images_q: Query<&ArrowImageHandles>,
                       window_query: Query<&Window>,
                       mut commands: Commands) {
 
-    let Ok(gamegrid) = gamegrid_query.single() else {return;};
+    if !cfg!(target_os="android") {return;}
+
     let Ok(window) = window_query.single() else {return;};
     let Ok(arrow_images) = arrow_images_q.single() else {return;};
     let Ok(rendering_history) = rendering_history_q.single() 
@@ -49,6 +40,7 @@ pub fn render_buttons(mut gamegrid_query: Query<&mut GameGrid>,
                 bottom: Val::Px(6. * coord_converter.block_size),
                 ..default()
             },
+            Pickable::IGNORE,
             BackgroundColor(GRAY.into())
         )
     ).with_children(|parent| 
@@ -64,9 +56,12 @@ pub fn render_buttons(mut gamegrid_query: Query<&mut GameGrid>,
                     bottom: Val::Px(2. * button_size),
                     ..default()
                 },
-                ImageNode::new(arrow_images.arrow_up.clone())
+                ImageNode::new(arrow_images.arrow_up.clone()),
                 )
-            );
+            ).observe(|_event: On<Pointer<Press>>, mut gamegrid_query: Query<&mut GameGrid>|{
+                let Ok(mut gamegrid) = gamegrid_query.single_mut() else {return;};
+                gamegrid.change_tet_mask();
+            });
             
             parent.spawn(
                 (
@@ -81,7 +76,10 @@ pub fn render_buttons(mut gamegrid_query: Query<&mut GameGrid>,
                 },
                 ImageNode::new(arrow_images.arrow_right.clone())
                 )
-            );
+            ).observe(|_event: On<Pointer<Press>>, mut gamegrid_query: Query<&mut GameGrid>|{
+                let Ok(mut gamegrid) = gamegrid_query.single_mut() else {return;};
+                gamegrid.move_tet_right();
+            });
             
             parent.spawn(
                 (
@@ -96,7 +94,10 @@ pub fn render_buttons(mut gamegrid_query: Query<&mut GameGrid>,
                 },
                 ImageNode::new(arrow_images.arrow_down.clone())
                 )
-            );
+            ).observe(|_event: On<Pointer<Press>>, mut gamegrid_query: Query<&mut GameGrid>|{
+                let Ok(mut gamegrid) = gamegrid_query.single_mut() else {return;};
+                gamegrid.dump_tet();
+            });
             
             parent.spawn(
                 (
@@ -111,6 +112,9 @@ pub fn render_buttons(mut gamegrid_query: Query<&mut GameGrid>,
                 },
                 ImageNode::new(arrow_images.arrow_left.clone())
                 )
-            );
+            ).observe(|_event: On<Pointer<Press>>, mut gamegrid_query: Query<&mut GameGrid>|{
+                let Ok(mut gamegrid) = gamegrid_query.single_mut() else {return;};
+                gamegrid.move_tet_left();
+            });
         });
 }

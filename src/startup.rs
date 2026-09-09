@@ -4,6 +4,7 @@ use bevy::asset::RenderAssetUsages;
 use bevy::image::CompressedImageFormats;
 use bevy::prelude::*;
 
+use crate::rendering::background::{GAME_HEIGHT, GAME_WIDTH};
 use crate::rendering::buttons::ArrowImageHandles;
 use crate::rendering::score::ScoreFont;
 use crate::{core::gamegrid::GameGrid, 
@@ -26,6 +27,7 @@ pub fn load_png_from_bytes(bytes: &[u8]) -> Image {
 }
 
 pub fn init(mut materials: ResMut<Assets<Image>>,
+            mut window_query: Query<&mut Window>,
             mut commands: Commands) {
         
     commands.spawn(Camera2d::default());
@@ -35,6 +37,15 @@ pub fn init(mut materials: ResMut<Assets<Image>>,
     let rendering_history = RenderingHistory::new((0.0, 0.0), &gamegrid);
 
     let font = Font { data: Blob::new(Arc::new(FONT_BYTES)), alias: "score_font".into() };
+
+    let Ok(mut window) = window_query.single_mut() else {return;};
+
+    let (new_height, new_width) = {
+        let game_ratio = (GAME_WIDTH as f32) / (GAME_HEIGHT as f32);
+        (window.height(), window.height() * game_ratio)
+    };
+
+    window.resolution.set(new_width, new_height);
 
     let arrow_up_img = load_png_from_bytes(ARROW_UP);
     let arrow_right_img = load_png_from_bytes(ARROW_RIGHT);
@@ -49,7 +60,6 @@ pub fn init(mut materials: ResMut<Assets<Image>>,
     let arrow_handles = ArrowImageHandles {
         arrow_up, arrow_right, arrow_down, arrow_left
     };
-
     commands.insert_resource(arrow_handles);
 
     let score_font = ScoreFont{font};
