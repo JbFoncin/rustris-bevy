@@ -7,7 +7,7 @@ edition = "2024"
 rand = "0.10.2"
 strum = "0.28.0"
 strum_macros = "0.28.0"
-bevy = "0.19.1"
+bevy = { version = "0.19.1", features = ["android-game-activity"] }
 blob = "0.3.0"
 linebender_resource_handle = "0.1.1"
 
@@ -17,3 +17,24 @@ lto = true
 codegen-units = 1   
 panic = "abort"     
 strip = true        
+
+[lib]
+name = "rustris_bevy_lib"
+path = "src/lib.rs"
+crate-type = ["cdylib", "rlib"]
+
+[package.metadata.android]
+package = "com.mygame.Rustris"
+label = "Rustris"
+build_targets = [ "armv7-linux-androideabi", "aarch64-linux-android" ]
+apk_name = "rustris"
+assets = "assets"
+#icon = "assets/icon.png"
+
+[package.metadata.android.sdk]
+target_sdk_version = 34
+min_sdk_version = 26
+
+[[bin]]
+name = "rustris-bevy"
+path = "src/main.rs"
